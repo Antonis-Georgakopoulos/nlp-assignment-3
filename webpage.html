@@ -3,7 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>My Webpage</title>
+    <title>Recipe Translator</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the send button element
+            const sendButton = document.getElementById('send-button');
+
+            // Add an event listener to the send button
+            sendButton.addEventListener('click', () => {
+                // Get the prompt input element and its value
+                const promptInput = document.getElementById('prompt');
+                const promptInputValue = promptInput.value;
+
+                // Create a new paragraph element and add the prompt input value to it
+                const newParagraph = document.createElement('p');
+                newParagraph.textContent = promptInputValue;
+
+                // Add a class to the new paragraph for styling
+                newParagraph.classList.add('generated-text');
+
+                // Get the prompt container element and append the new paragraph to it
+                const promptContainer = document.getElementById('prompt-container');
+                promptContainer.appendChild(newParagraph);
+
+                // Clear the prompt input value
+                promptInput.value = '';
+
+                // Add a loading indicator to the prompt container
+                promptContainer.classList.add('loading');
+
+                // Use setTimeout to simulate 2-3 seconds of lazy loading
+                setTimeout(() => {
+                    // Remove the loading indicator from the prompt container
+                    promptContainer.classList.remove('loading');
+                }, 2000);
+            });
+        });
+
+    </script>
     <style>
         /* CSS styles */
         body {
@@ -144,18 +181,32 @@
         #send-button:hover {
             cursor: pointer;
         }
+
+        #prompt-container.loading::before {
+            content: 'Loading...';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Pacifico&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
     <div id="background"></div>
     <div id="content">
-        <h1>Welcome to my webpage</h1>
-        <p>This is a basic webpage with an image banner, a prompt for text, and a send button.</p>
+        <h1>Recipe Translator</h1>
+        <p>Translate any recipe to a different cuisine using our AI-powered tool. Simply input the name and list of
+            ingredients and let our algorithm do the rest</p>
         <div id="prompt-container">
-            <input type="text" id="prompt" placeholder="Type your message...">
+            <input type="text" id="prompt" placeholder="Enter a recipe or dish description here...">
             <button type="submit" id="send-button">
                 <img src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-forward-512.png"
                     alt="send button">
