@@ -18,7 +18,6 @@ def process_input():
 
     input_text = request.json["inputText"]
     target_cuisine = request.json["target_cuisine"]
-
     ingredients = input_text.split(',')
     similar_ingredients = []
     words_to_skip = ['indian', 'greek']
@@ -38,7 +37,7 @@ def process_input():
     similar_ingredient_names = [x[0] for x in similar_ingredients]
 
     if len(similar_ingredient_names) == 0:
-        return "Sorry we could not found any similar ingredients to the ones you gave us."
+        return "Sorry we could not found any similar ingredients to the ones you provided."
     else:
         return ', '.join(similar_ingredient_names)
 

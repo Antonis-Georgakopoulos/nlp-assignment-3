@@ -14,12 +14,14 @@
                     sendRequestToServer(prompt)
             });
 
-            prompt.addEventListener("keypress", function() {
+            prompt.addEventListener("keypress", function () {
                 if (event.key === "Enter") {
                     if (prompt.value != '')
                         sendRequestToServer(prompt)
                 }
             });
+
+            selectElement()
         });
 
         function createAnswerDiv(responseText) {
@@ -41,6 +43,12 @@
             if (answer_box != null) {
                 answer_box.remove()
             }
+            let selectElement = document.getElementById("selected-option");
+            let selectedValue = selectElement.getAttribute('data-value');
+            if (selectedValue == null || selectedValue == '')
+            {
+                selectedValue = 'indian'   
+            }
 
             // get the input text
             let inputText = prompt.value;
@@ -52,7 +60,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ inputText: inputText, target_cuisine: 'greek' })
+                body: JSON.stringify({ inputText: inputText, target_cuisine: selectedValue })
             })
                 .then(response => response.text())
                 .then(responseText => {
@@ -61,6 +69,40 @@
                     prompt.value = "";
                 });
         }
+
+        const selectElement = () => {
+            // Get all select elements on the page
+            const selects = document.querySelectorAll('.select');
+
+            // Add a click event listener to each select element
+            selects.forEach(select => {
+                // Get the button element and options container for this select element
+                const button = select.querySelector('.button');
+                const options = select.querySelector('.options');
+
+                // Add a click event listener to the button element
+                button.addEventListener('click', () => {
+                    // Toggle the "open" class on the select element to show/hide the options container
+                    select.classList.toggle('open');
+                });
+
+                // Add a click event listener to each option element
+                options.querySelectorAll('a').forEach(option => {
+                    option.addEventListener('click', () => {
+                        // Set the data-value attribute of the button element to the selected option value
+                        button.setAttribute('data-value', option.getAttribute('data-value'));
+                        // Update the text of the button element to the selected option text
+                        button.innerText = option.innerText;
+                        // Remove the "open" class from the select element to hide the options container
+                        select.classList.remove('open');
+                    });
+                });
+            });
+        }
+
+
+
+
     </script>
     <style>
         /* CSS styles */
@@ -243,7 +285,7 @@
         }
 
 
-        .answer-prompt{
+        .answer-prompt {
             width: 100%;
             height: 70px;
             max-width: 600px;
@@ -257,12 +299,81 @@
             background-size: 25px 25px;
             margin-bottom: 10px;
             pointer-events: none;
-            min-height: 90px; /* Set a minimum height */
+            min-height: 90px;
+            /* Set a minimum height */
         }
 
-        .answer-prompt::placeholder{
+        .answer-prompt::placeholder {
             white-space: pre-wrap;
             width: 100%;
+        }
+
+        .select {
+            position: relative;
+            display: inline-block;
+            font-size: 16px;
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            border: none;
+            background-color: transparent;
+            text-align: left;
+        }
+
+        .options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: none;
+            z-index: 1;
+            min-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .options a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .options a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .select.open .options {
+            display: block;
+        }
+
+        .select.selected .button:before {
+            content: attr(data-value);
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 16px;
+            color: #666;
+        }
+
+        .select:hover {
+            border-color: #666;
+        }
+
+        .select:focus-within {
+            border-color: #333;
         }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Pacifico&display=swap" rel="stylesheet">
@@ -275,6 +386,15 @@
         <p>Translate any recipe to a different cuisine using our AI-powered tool. Simply input the name and list of
             ingredients and let our algorithm do the rest</p>
         <div id="prompt-container">
+
+            <div class="select">
+                <button id="selected-option" class="button">Please select an option</button>
+                <div class="options">
+                    <a href="#" data-value="indian">Convert to Indian</a>
+                    <a href="#" data-value="greek">Convert to Greek</a>
+                </div>
+            </div>
+
             <input type="text" id="prompt" placeholder="Enter a recipe or dish description here...">
             <button type="submit" id="send-button">
                 <img src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-arrow-forward-512.png"
