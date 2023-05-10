@@ -3,7 +3,7 @@ from gensim.models import Word2Vec
 
 app = Flask(__name__)
 
-word2vec_model = Word2Vec.load('model.bin')
+word2vec_model = Word2Vec.load('model3.bin')
 
 @app.after_request
 def after_request(response):
@@ -17,13 +17,20 @@ def after_request(response):
 def process_input():
 
     input_text = request.json["inputText"]
+    target_cuisine = request.json["target_cuisine"]
 
     ingredients = input_text.split(',')
     similar_ingredients = []
+    words_to_skip = ['indian', 'greek']
 
     for ingredient in ingredients:
         try:
-            similar_ingredients.extend(word2vec_model.wv.most_similar(ingredient.lstrip().rstrip(), topn=1))
+            similar_words = word2vec_model.wv.most_similar(positive=[ingredient, target_cuisine], negative=None, topn=5)
+            print(similar_words)
+            for ingr in similar_words:
+                if str(ingr[0]).lower().strip() in words_to_skip: continue
+                similar_ingredients.append(ingr)
+                break
         except:
             continue
 
