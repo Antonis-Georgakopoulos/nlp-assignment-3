@@ -10,42 +10,56 @@
             const sendButton = document.querySelector("#send-button");
 
             sendButton.addEventListener("click", function () {
-                // remove output element from previous answer if exists
-                let answer_box = document.querySelector('.answer-container')
-                if (answer_box != null){
-                    answer_box.remove()
+                sendRequestToServer(prompt)
+            });
+
+            prompt.addEventListener("keypress", function() {
+                if (event.key === "Enter") {
+                    sendRequestToServer(prompt)
                 }
-                
-                // get the input text
-                let inputText = prompt.value;
-                
-                let outputMessage = ''
-
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", "/process-input");
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify({ inputText }));
-                xhr.onload = function() {
-                    //let responseText = xhr.responseText;
-                    let responseText = 'testing message asdfasdfasdfasdf';
-                    // Add a new textbox with the answer below the original textbox
-                    const answerContainer = document.createElement("div");
-                    answerContainer.classList.add("answer-container");
-
-                    const answerPrompt = document.createElement("input");
-                    answerPrompt.type = "text";
-                    answerPrompt.classList.add("prompt");
-                    answerPrompt.placeholder = outputMessage;
-                    answerContainer.appendChild(answerPrompt);
-
-                    const content = document.querySelector("#content");
-                    content.appendChild(answerContainer);
-
-                    // clear the input text
-                    prompt.value = "";
-                };
             });
         });
+
+        function createAnswerDiv(responseText) {
+            const answerContainer = document.createElement("div");
+            answerContainer.classList.add("answer-container");
+            const answerPrompt = document.createElement("input");
+            answerPrompt.type = "text";
+            answerPrompt.classList.add("prompt");
+            answerPrompt.placeholder = responseText;
+            answerContainer.appendChild(answerPrompt);
+
+            const content = document.querySelector("#content");
+            content.appendChild(answerContainer);
+        }
+
+        const sendRequestToServer = (prompt) => {
+            // remove output element from previous answer if exists
+            let answer_box = document.querySelector('.answer-container')
+            if (answer_box != null) {
+                answer_box.remove()
+            }
+
+            // get the input text
+            let inputText = prompt.value;
+
+            let outputMessage = ''
+
+            fetch('http://localhost:5000/process-input', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputText: inputText })
+            })
+                .then(response => response.text())
+                .then(responseText => {
+                    console.log(responseText)
+                    createAnswerDiv(responseText)
+                    // clear the input text
+                    prompt.value = "";
+                });
+        }
     </script>
     <style>
         /* CSS styles */
