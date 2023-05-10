@@ -70,6 +70,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            position: relative;
         }
 
         #prompt {
@@ -84,13 +86,14 @@
             background-repeat: no-repeat;
             background-position: 0 center;
             background-size: 25px 25px;
+            margin-bottom: 10px;
         }
 
         #send-button {
             position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
+            right: 0;
+            top: 0;
+            bottom: 0;
             border: none;
             background: none;
         }
