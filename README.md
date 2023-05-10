@@ -11,7 +11,7 @@ conda install -c conda-forge gensim=4.3.1
 pip install flask==2.3.2
 ```
 
-**Run the script**
+**Run the script:**
 ```shell
 python backend.py
 ```
