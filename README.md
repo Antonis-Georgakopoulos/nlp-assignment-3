@@ -22,3 +22,7 @@ pip install flask==2.3.2
 python backend.py
 ```
 Now, while the backend.py is running, double click on the webpage.html from your file folder.
+
+
+main.ipynb - Data Processing, cleaning and training
+model3.bin - Trained model
