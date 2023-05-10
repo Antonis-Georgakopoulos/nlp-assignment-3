@@ -2,6 +2,12 @@
 
 After cloning the Git Repo
 
+**Download Data**
+
+Recipe-ingredients dataset: https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv
+
+Ingredient-description of each ingredient - https://foodb.ca/ 
+
 **Env setup:**
 ```shell
 conda create -n nlp
