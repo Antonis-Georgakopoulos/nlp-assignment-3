@@ -6,40 +6,46 @@
     <title>Recipe Translator</title>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Get the send button element
-            const sendButton = document.getElementById('send-button');
+            const prompt = document.querySelector("#prompt");
+            const sendButton = document.querySelector("#send-button");
 
-            // Add an event listener to the send button
-            sendButton.addEventListener('click', () => {
-                // Get the prompt input element and its value
-                const promptInput = document.getElementById('prompt');
-                const promptInputValue = promptInput.value;
+            sendButton.addEventListener("click", function () {
+                // remove output element from previous answer if exists
+                let answer_box = document.querySelector('.answer-container')
+                if (answer_box != null){
+                    answer_box.remove()
+                }
+                
+                // get the input text
+                let inputText = prompt.value;
+                
+                let outputMessage = ''
 
-                // Create a new paragraph element and add the prompt input value to it
-                const newParagraph = document.createElement('p');
-                newParagraph.textContent = promptInputValue;
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/process-input");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({ inputText }));
+                xhr.onload = function() {
+                    //let responseText = xhr.responseText;
+                    let responseText = 'testing message asdfasdfasdfasdf';
+                    // Add a new textbox with the answer below the original textbox
+                    const answerContainer = document.createElement("div");
+                    answerContainer.classList.add("answer-container");
 
-                // Add a class to the new paragraph for styling
-                newParagraph.classList.add('generated-text');
+                    const answerPrompt = document.createElement("input");
+                    answerPrompt.type = "text";
+                    answerPrompt.classList.add("prompt");
+                    answerPrompt.placeholder = outputMessage;
+                    answerContainer.appendChild(answerPrompt);
 
-                // Get the prompt container element and append the new paragraph to it
-                const promptContainer = document.getElementById('prompt-container');
-                promptContainer.appendChild(newParagraph);
+                    const content = document.querySelector("#content");
+                    content.appendChild(answerContainer);
 
-                // Clear the prompt input value
-                promptInput.value = '';
-
-                // Add a loading indicator to the prompt container
-                promptContainer.classList.add('loading');
-
-                // Use setTimeout to simulate 2-3 seconds of lazy loading
-                setTimeout(() => {
-                    // Remove the loading indicator from the prompt container
-                    promptContainer.classList.remove('loading');
-                }, 2000);
+                    // clear the input text
+                    prompt.value = "";
+                };
             });
         });
-
     </script>
     <style>
         /* CSS styles */
@@ -194,6 +200,31 @@
             justify-content: center;
             align-items: center;
             z-index: 2;
+        }
+
+        .answer-container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .prompt {
+            width: 90%;
+            height: 35px;
+            max-width: 600px;
+            font-size: 24px;
+            padding: 20px 80px 20px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: 0 center;
+            background-size: 25px 25px;
+            margin-bottom: 10px;
+            pointer-events: none;
         }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Pacifico&display=swap" rel="stylesheet">
